@@ -1,0 +1,47 @@
+
+trigger: none
+
+pool:
+  name: cap
+
+variables:
+  workingDirectory: '.'
+
+steps:
+
+# 🔹 Terraform install
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+
+# 🔹 Terraform Init
+- task: TerraformTask@5
+  displayName: "Terraform Init"
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(workingDirectory)'
+    backendServiceArm: 'Captest'
+    backendAzureRmResourceGroupName: 'c1apgenikatestlele'
+    backendAzureRmStorageAccountName: 'capstora'
+    backendAzureRmContainerName: 'pipetest23'
+    backendAzureRmKey: 'capstora.tfstate'
+
+# 🔹 Terraform Plan
+- task: TerraformTask@5
+  displayName: "Terraform Plan"
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(workingDirectory)'
+    environmentServiceNameAzureRM: 'Captest'
+
+# 🔹 Terraform Apply
+- task: TerraformTask@5
+  displayName: "Terraform Apply"
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: '$(workingDirectory)'
+    environmentServiceNameAzureRM: 'Captest'
+    commandOptions: '--auto-approve'
